@@ -7,12 +7,12 @@
 #include <memory>
 
 static const int RTMP_VERSION           = 0x3;
-static const int RTMP_SET_CHUNK_SIZE    = 0x1; /* ÉèÖÃ¿é´óÐ¡ */
-static const int RTMP_AOBRT_MESSAGE     = 0X2; /* ÖÕÖ¹ÏûÏ¢ */
-static const int RTMP_ACK               = 0x3; /* È·ÈÏ */
-static const int RTMP_USER_EVENT        = 0x4; /* ÓÃ»§¿ØÖÆÏûÏ¢ */
-static const int RTMP_ACK_SIZE          = 0x5; /* ´°¿Ú´óÐ¡È·ÈÏ */
-static const int RTMP_BANDWIDTH_SIZE    = 0x6; /* ÉèÖÃ¶Ô¶Ë´ø¿í */
+static const int RTMP_SET_CHUNK_SIZE    = 0x1; /* ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½Ð¡ */
+static const int RTMP_AOBRT_MESSAGE     = 0X2; /* ï¿½ï¿½Ö¹ï¿½ï¿½Ï¢ */
+static const int RTMP_ACK               = 0x3; /* È·ï¿½ï¿½ */
+static const int RTMP_USER_EVENT        = 0x4; /* ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ */
+static const int RTMP_ACK_SIZE          = 0x5; /* ï¿½ï¿½ï¿½Ú´ï¿½Ð¡È·ï¿½ï¿½ */
+static const int RTMP_BANDWIDTH_SIZE    = 0x6; /* ï¿½ï¿½ï¿½Ã¶Ô¶Ë´ï¿½ï¿½ï¿½ */
 static const int RTMP_AUDIO             = 0x08;
 static const int RTMP_VIDEO             = 0x09;
 static const int RTMP_FLEX_MESSAGE      = 0x11; //amf3
@@ -38,6 +38,13 @@ static const int RTMP_CODEC_ID_G711U    = 8;
 
 static const int RTMP_AVC_SEQUENCE_HEADER = 0x18;
 static const int RTMP_AAC_SEQUENCE_HEADER = 0x19;
+
+#if defined(ANDROID)
+	#include <android/log.h>
+	#ifndef MODULE_NAME
+		#define MODULE_NAME "RTMPSERVER"
+	#endif
+#endif
 
 namespace xop
 {
@@ -81,7 +88,7 @@ public:
 	void SetPeerBandwidth(uint32_t size)
 	{ peer_bandwidth_ = size; }
 
-	uint32_t GetChunkSize() const 
+	uint32_t GetChunkSize() const
 	{ return max_chunk_size_; }
 
 	uint32_t GetGopCacheLen() const
@@ -105,7 +112,7 @@ public:
 			return -1;
 		}
 
-#if defined(__linux) || defined(__linux__)
+#if defined(__linux) || defined(__linux__) || defined(__FreeBSD__) || defined(__APPLE__) || defined(ANDROID)
 		if (sscanf(url.c_str() + 7, "%[^:]:%hu/%s", ip, &port, streamPath) == 3)
 #elif defined(WIN32) || defined(_WIN32)
 		if (sscanf_s(url.c_str() + 7, "%[^:]:%hu/%s", ip, 100, &port, streamPath, 500) == 3)
@@ -113,7 +120,7 @@ public:
 		{
 			port_ = port;
 		}
-#if defined(__linux) || defined(__linux__)
+#if defined(__linux) || defined(__linux__) || defined(__FreeBSD__) || defined(__APPLE__) || defined(ANDROID)
 		else if (sscanf(url.c_str() + 7, "%[^/]/%s", ip, streamPath) == 2)
 #elif defined(WIN32) || defined(_WIN32)
 		else if (sscanf_s(url.c_str() + 7, "%[^/]/%s", ip, 100, streamPath, 500) == 2)
@@ -130,7 +137,7 @@ public:
 		stream_path_ += streamPath;
 		url_ = url;
 
-#if defined(__linux) || defined(__linux__)
+#if defined(__linux) || defined(__linux__) || defined(__FreeBSD__) || defined(__APPLE__) || defined(ANDROID)
 		if (sscanf(stream_path_.c_str(), "/%[^/]/%s", app, streamName) != 2)
 #elif defined(WIN32) || defined(_WIN32)
 		if (sscanf_s(stream_path_.c_str(), "/%[^/]/%s", app, 100, streamName, 400) != 2)
@@ -180,4 +187,3 @@ public:
 }
 
 #endif
- 

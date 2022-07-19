@@ -20,18 +20,18 @@
 
 #define TASK_SCHEDULER_PRIORITY_LOW       0
 #define TASK_SCHEDULER_PRIORITY_NORMAL    1
-#define TASK_SCHEDULER_PRIORITYO_HIGH     2 
+#define TASK_SCHEDULER_PRIORITYO_HIGH     2
 #define TASK_SCHEDULER_PRIORITY_HIGHEST   3
 #define TASK_SCHEDULER_PRIORITY_REALTIME  4
 
 namespace xop
 {
 
-class EventLoop 
+class DLL_API EventLoop 
 {
 public:
 	EventLoop(const EventLoop&) = delete;
-	EventLoop &operator = (const EventLoop&) = delete; 
+	EventLoop &operator = (const EventLoop&) = delete;
 	EventLoop(uint32_t num_threads =1);  //std::thread::hardware_concurrency()
 	virtual ~EventLoop();
 
@@ -39,10 +39,10 @@ public:
 
 	bool AddTriggerEvent(TriggerEvent callback);
 	TimerId AddTimer(TimerEvent timerEvent, uint32_t msec);
-	void RemoveTimer(TimerId timerId);	
+	void RemoveTimer(TimerId timerId);
 	void UpdateChannel(ChannelPtr channel);
 	void RemoveChannel(ChannelPtr& channel);
-	
+
 	void Loop();
 	void Quit();
 
@@ -57,4 +57,3 @@ private:
 }
 
 #endif
-
